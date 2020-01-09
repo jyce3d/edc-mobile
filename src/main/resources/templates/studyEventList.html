@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <head>
+  	 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>	
+
+	<script>
+
+	</script>
+    <title>StudyEvent List</title>
+  </head>
+
+  <body>
+  <div data-role="header"> 
+				<h1>
+				Study Event Data</h1> 
+	</div>
+	<div data-role="content">				
+				<div th:each="studyEvent: ${studyEventList}" data-role="collapsible" data-collapsed="true">
+  				<h3 th:text="${'['+studyEvent.scheduledDate+'] '+studyEvent.studyEventName}"></h3>
+					<div data-role="fieldcontain">
+				 	<label for="description">Description</label>
+ 				 	<input type="TEXT" disabled id="description" th:value="${studyEvent.studyEventDescr}" />
+				 	<label for="scheduledDate">Scheduled Event Date</label>
+					<input type="TEXT" disabled id="scheduledDate" th:value="${studyEvent.scheduledDate}" />
+				 	<label for="tolerance">Tolerance</label>
+				 	<input type="TEXT" disabled id="tolerance" value="[NA;NA]" />
+				 	<label for="effectiveDate">Effective Date</label>
+				 	<input type="TEXT" disabled id="effectiveDate" th:value="${studyEvent.effectiveDate}" 
+				 	/>
+				 	<input type="button" id="editStudyEvent" value='Edit Study Event' />
+					  <ul data-role="listview" data-inset="true"> 
+
+					    <li data-role="list-divider">Form List</li>
+					    <li th:each="formDescr : ${studyEvent.formDescrList}">
+    						<a  th:href="@{/formData(formDefId=${formDescr.formDefId}, studyEventDefId=${studyEvent.studyEventDefId}, subjectId=${subjectData.id})}" target="_self" data-ajax="false">
+								<span th:text="${formDescr.formName}" />
+							</a>
+    					</li>
+					  
+
+					</div> <!-- field content -->
+				</div> <!-- studyevents -->
+				
+
+		</div> 	<!-- content -->
+  </body>
+  </html>

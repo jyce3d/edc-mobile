@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <head>
+ <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+<link rel="stylesheet" type="text/css" href="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.min.css" />   
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>	
+<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.mode.datebox.min.js"></script>
+<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/i18n/jquery.mobile.datebox.i18n.en_US.utf8.js"></script> 
+
+	<script type="text/javascript">
+		$(document).on("pageinit", "#formData-page", function() {
+		// intialize your control here
+				$("#btn-draft").on('click',function() {				
+					$('#form-status').val("1");
+					$('#formData-form').submit();	
+				});
+		
+				
+				$("#btn-audit").on('click',function() {
+					this.disable = true;
+				});
+			
+				$("[id^='item-def-']").on('change', function() {
+				 var sub = this.name.substring(9);
+				 var arr = sub.split("-");
+				 var obj = $("#item-dirty-"+arr[0]+"-"+arr[1]);
+				 $("#item-dirty-"+arr[0]+"-"+arr[1]).val("t");			
+				});
+				//$("[id^='-no']").on('change', function() {
+				//	aler('ici');
+				//		if (this.checked)
+				//					this.checked=false;
+				//	});
+	
+				
+		});
+
+	</script>
+    <title>FormData List</title>
+  </head>
+
+  <body>
+  
+  	<form method="POST" th:action="@{/formData}" id="formData-form" name="formData-form" data-ajax="false">
+	<div data-role="page" id="formData-page"> 
+	
+			<div data-role="header">
+				<h1>Form Data</h1>
+				<h3 th:text="${'Subject Key :'+subject.subjectKey+' '+studyEvent.name+ ' : ' + formDef.name}"></h3>
+			</div>
+			<div data-role="content">
+				<div th:each="itemGroup: ${formDef.itemGroupDefList}">
+					<h3 style="background-color:blue ; color:white"  th:text="${itemGroup.description}"></h3>
+					<div data-role="fieldcontent" th:each="itemDef: ${itemGroup.itemDefList}">
+						<label th:for="${'item-def-'+itemGroup.id+'-'+itemDef.id}" th:text="${itemDef.question}"></label>
+						<span th:if="${itemDef.dataType ==1 and itemDef.codeList!=null }">
+							<SELECT th:id="'item-def-'+${itemGroup.id}+'-'+${itemDef.id}"  th:name="'item-def-'+${itemGroup.id}+'-'+${itemDef.id}" >
+								<OPTION value="">NA</OPTION>
+								<OPTION th:each="codeItem:${itemDef.codeList.codeListItems}"  th:selected="${codeItem.codedValue == itemDef.value}" 
+									th:value="${codeItem.codedValue}" th:text="${codeItem.decode}" />
+							</SELECT>
+						</span>
+						<span th:if="${itemDef.dataType ==1 and itemDef.codeList==null }">
+							<input  th:id="${'item-def-'+itemGroup.id+'-'+itemDef.id}" th:name="${'item-def-'+itemGroup.id+'-'+itemDef.id}" th:value="${itemDef.value}" />
+						</span>
+						<span th:if="${itemDef.dataType == 3}">
+							<input th:value="${itemDef.value}" th:id="${'item-def-'+itemGroup.id+'-'+itemDef.id}" th:name="${'item-def-'+itemGroup.id+'-'+itemDef.id}" placeholder="mm/dd/yyyy"   pattern="^\d{1,2}\\\d{1,2}\\\d{4}$" th:type="text" data-role="datebox" data-options='{"mode":"datebox", "useNewStyle":true}'>
+						</span>
+						<span  th:if="${itemDef.dataType == 2}">
+							<fieldset class="ui-grid-a">
+								<div class="ui-block-a">
+ 							       <label th:for="${'item-def-'+itemGroup.id+'-'+itemDef.id}+'-yes'">Yes</label>
+ 							       
+        							<input th:if="${itemDef.value=='checked'}" th:type="radio" th:id="${'item-def-'+itemGroup.id+'-'+itemDef.id+'-yes'}" th:name="${'item-def-'+itemGroup.id+'-'+itemDef.id+'-yes'}" checked >
+        							<input th:if="${itemDef.value!='checked'}" th:type="radio" th:id="${'item-def-'+itemGroup.id+'-'+itemDef.id+'-yes'}" th:name="${'item-def-'+itemGroup.id+'-'+itemDef.id+'-yes'}"  >
+        							
+    							</div>
+							
+							   <div class="ui-block-b">
+ 							       <label th:for="${'item-def-'+itemGroup.id+'-'+itemDef.id}+'-no'">No</label>
+        							<input th:if="${itemDef.value=='checked'}" th:type="radio" th:id="${'item-def-'+itemGroup.id+'-'+itemDef.id+'-no'}" th:name="${'item-def-'+itemGroup.id+'-'+itemDef.id+'-no'}" checked >
+        							<input th:if="${itemDef.value!='checked'}" th:type="radio" th:id="${'item-def-'+itemGroup.id+'-'+itemDef.id+'-no'}" th:name="${'item-def-'+itemGroup.id+'-'+itemDef.id+'-no'}"  >
+    							</div> 
+							</fieldset>
+						</span>
+						<span th:if="${itemDef.dataType == 4}">	
+							<input  th:id="${'item-def-'+itemGroup.id+'-'+itemDef.id}" th:name="${'item-def-'+itemGroup.id+'-'+itemDef.id}" th:value="${itemDef.value}" />
+						</span>
+						<input type="hidden" th:name="${'item-dirty-'+itemGroup.id+'-'+itemDef.id}"  th:id="${'item-dirty-'+itemGroup.id+'-'+itemDef.id}"  th:value="f">
+						
+					</div> <!-- field content -->
+				</div> <!--  item groups -->
+				<input type="hidden" th:name="id" th:value="${formDef.id}" />
+				<input type="hidden" th:name="studyEventId" th:value="${studyEvent.id}" />
+				<input type="hidden" th:name="studyEventDataId" th:value="${studyEventDataId}" />
+				<input type="hidden" th:name="subjectId" th:value="${subject.id}" />
+				<input type="hidden" th:name="formDataId" th:value="${formDataId}" />
+				<input type="hidden" th:name="form-status" th:id="form-status" />
+			</div><!--  data role content -->
+			<div data-role="footer" class="ui-bar"> 
+			<!--TODO: your additional controls here -->
+				<a th:if="${formDataId==null}" th:href="@{#}" id="btn-draft"  >Save</a>
+				<a th:if="${formDataId!=null}" th:href="@{#dlg-draft}"  target="_self" data-rel="dialog" data-transition="pop" id="btn-draft3">Save</a>
+				<a href="#dlg-sign" id="btn-final"  >Sign</a> 			
+				<a data-ajax="false" id="btn-audit" href="formAuditPdf.htm?form-data-id=" th:href="@{formAuditPdf(form-data-id,${formDataId})}" >Audit</a>
+				<a data-ajax="false" href="/logout" >Logout</a>  
+			</div>		
+			
+
+	</div>
+	<div data-role="dialog" id="dlg-draft" >
+		<script>
+			$(document).on("pageinit", "#dlg-draft", function() {
+	// intialize your control here
+				
+				$("#btn-dlg-draft2").on('click',function() {
+							$('#form-status').val(1); // status draft
+							$('#formData-form').submit();	
+				});
+			});
+		</script>
+		<div data-role="header">
+					<h2>Draft</h2>
+		</div>
+		<div data-role="content">
+					<label for="reasonForUpdate"><em  style="color:red">*</em>Reason for update</label>
+					<input value="" type="TEXT" name="reasonForUpdate" id="reasonForUpdate" >
+	
+		</div>
+		<div data-role="footer">
+					<a th:href="@{#}" id="btn-dlg-draft2"  >Save</a> 
+					<a th:href="@{#dlg-draft}" data-rel="back" >Back</a>
+		</div>
+	</div>	
+	</form>
+  </body>
+</html>

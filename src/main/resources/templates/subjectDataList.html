@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <head>
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>	
+
+	<script>
+
+	</script>
+    <title>SubjectData List</title>
+  </head>
+
+  <body>
+		<div data-role="page" id="subjectDataListPage" data-dom-cache="false">
+			<div data-role="header">
+				<h1>Subject List</h1>
+			</div>
+				<div data-role="content">
+					<ul data-role="listview" data-inset="true" >
+						<li  th:each="subject : ${subjectDataList}" ><a th:href="@{/studyEventList(subjectDataId=${subject.id},studyId=${studyId}) }"  data-ajax="false"> <span th:text="${subject.subjectKey}" /></a>
+						</li>
+					</ul>
+				</div>
+			<div data-role="footer" class="ui-bar"> 
+				<a  th:href="@{/exportCDISC(studyId=${studyId})}" id="btn-cdisc" data-ajax="false"  >CDISC</a>
+			</div>
+				
+		</div>
+		
+  </body>
+</html>
